@@ -1,15 +1,22 @@
 #!/bin/sh
 
-/alist server &
+set -e
 
-echo "Waiting for Alist to start..."
+# Find the alist binary
+ALIST_BIN=$(find / -type f -name alist 2>/dev/null | head -n 1)
 
-until /alist admin random >/dev/null 2>&1; do
-    sleep 1
-done
+echo "Found Alist binary: $ALIST_BIN"
 
+# Start Alist
+"$ALIST_BIN" server &
+
+# Wait for startup
+sleep 8
+
+# Set admin password if provided
 if [ -n "$ADMIN_PASSWORD" ]; then
-    /alist admin set "$ADMIN_PASSWORD"
+    echo "Setting admin password..."
+    "$ALIST_BIN" admin set "$ADMIN_PASSWORD"
 fi
 
 wait
