@@ -1,16 +1,15 @@
 #!/bin/sh
 
-# Start Alist in the background
 /alist server &
 
-# Wait for Alist to initialize
-sleep 5
+echo "Waiting for Alist to start..."
 
-# Set admin password if provided
+until /alist admin random >/dev/null 2>&1; do
+    sleep 1
+done
+
 if [ -n "$ADMIN_PASSWORD" ]; then
-    echo "Setting admin password..."
     /alist admin set "$ADMIN_PASSWORD"
 fi
 
-# Wait for Alist process
 wait
